@@ -101,3 +101,60 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+
+--
+
+## ⚙️ Configuration
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `token` | string | Your Discord user token |
+| `status` | string | `online` · `idle` · `dnd` · `invisible` |
+| `activity.type` | string | `custom` · `playing` · `streaming` · `listening` · `watching` · `competing` |
+| `activity.name` | string | Text after the verb (ignored for `custom`) |
+| `activity.details` | string | Optional second line (only for `playing`) |
+| `activity.state` | string | Optional third line (only for `playing`) |
+| `activity.stream_url` | string | Required for `streaming` must be a Twitch or YouTube URL |
+| `activity.custom_status` | string | Text shown for `custom` type |
+| `activity.use_emoji` | bool | Enable an emoji on the custom status |
+| `activity.emoji` | string | Unicode emoji (e.g. `"🔥"`) |
+
+### Example presets
+
+**Playing a game**
+```json
+"activity": { "type": "playing", "name": "Minecraft" }
+```
+
+**Streaming on Twitch**
+```json
+"activity": {
+  "type": "streaming",
+  "name": "Live coding",
+  "stream_url": "https://twitch.tv/yourname"
+}
+```
+
+**Custom status with emoji**
+```json
+"activity": {
+  "type": "custom",
+  "custom_status": "Hey there!",
+  "use_emoji": true,
+  "emoji": "🔥"
+}
+```
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `Invalid token!` | Re-copy your token it may have expired or been reset. |
+| `ModuleNotFoundError: websockets` | Run `pip install -r requirements.txt`. |
+| `python: command not found` | Try `python3` instead, or reinstall Python with PATH enabled. |
+| Account shows **offline** anyway | Close all other Discord clients on mobile/desktop only the last presence wins. |
+| Script exits immediately | Check the console usually a malformed `config.json` (trailing comma, missing quotes). |
+
+
