@@ -35,7 +35,7 @@
 
 ---
 
-## 🔎 Obtaining Your Token
+## Obtaining Your Token
 
 > [!CAUTION]
 > A user token is equivalent to your password. Treat it like one.
@@ -50,7 +50,7 @@
 8. Copy the value next to `authorization:`. That's your token.
 
 > [!WARNING]
-> **Do not paste your token into any website, bot, or Discord message** — even if it claims to "check" or "verify" it. That is always a scam.
+> **Do not paste your token into any website, bot, or Discord message** even if it claims to "check" or "verify" it. That is always a scam.
 
 ---
 
