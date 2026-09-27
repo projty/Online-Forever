@@ -64,3 +64,39 @@ Download Python **3.8 or newer** from [python.org/downloads](https://python.org/
 Verify with:
 ```bash
 python --version
+```
+
+### 2. Download the project
+Either clone the repo:
+
+```bash
+git clone https://github.com/SealedSaucer/Online-Forever.git
+cd Online-Forever
+```
+Or download the ZIP and extract it.
+
+3. Configure
+Open config.json and edit:
+
+```json
+{
+  "token": "YOUR_TOKEN_HERE",
+  "status": "online",
+  "activity": {
+    "type": "playing",
+    "name": "Minecraft"
+  }
+}
+```
+
+See the Configuration section below for all options.
+
+4. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+5. Run it
+```bash
+python main.py
+```
