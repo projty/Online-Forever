@@ -1,7 +1,7 @@
 <div id="Phantom" align="center">
     <h1>Online Forever</h1>
     <p>Keep your Discord account 24/7 online.</p>
-    <img src="preview.png" height="210">
+    <img src="preview.png">
 </div>
 
 ---
