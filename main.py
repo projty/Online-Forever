@@ -3,79 +3,86 @@ import json
 import requests
 import websockets
 
-TOKEN = "Add your token here"
-STATUS = "online"  # online / dnd / idle
-CUSTOM_STATUS = "Hey!"  # Leave empty if you don't want a custom status
-USE_EMOJI = False
+with open("config.json") as f:
+    cfg = json.load(f)
 
-headers = {"Authorization": TOKEN}
+TOKEN = cfg["token"]
+STATUS = cfg["status"]
+ACT = cfg["activity"]
 
-r = requests.get("https://discord.com/api/v10/users/@me", headers=headers)
-if r.status_code != 200:
-    print("Invalid token!")
-    exit()
-
-user = r.json()
-print(f"Logged in as {user['username']} ({user['id']})!")
-
-activity = {
-    "name": "Custom Status",
-    "type": 4,
-    "state": CUSTOM_STATUS,
-    "id": "custom"
+TYPE_IDS = {
+    "playing": 0,
+    "streaming": 1,
+    "listening": 2,
+    "watching": 3,
+    "custom": 4,
+    "competing": 5,
 }
 
-if USE_EMOJI:
-    activity["emoji"] = {
-        "name": "🔥",   # Unicode emoji or emoji name
-        "id": None,     # Required only for custom emojis
-        "animated": False
-    }
 
-async def discord_gateway():
+def build_activity():
+    kind = ACT["type"].lower()
+
+    if kind == "custom":
+        a = {"name": "Custom Status", "type": 4,
+             "state": ACT["custom_status"], "id": "custom"}
+        if ACT["use_emoji"]:
+            a["emoji"] = {"name": ACT["emoji"], "id": None, "animated": False}
+        return a
+
+    a = {"name": ACT["name"], "type": TYPE_IDS.get(kind, 0)}
+    if ACT.get("details"):
+        a["details"] = ACT["details"]
+    if ACT.get("state"):
+        a["state"] = ACT["state"]
+    if kind == "streaming":
+        a["url"] = ACT["stream_url"]
+    return a
+
+
+def check_token():
+    r = requests.get("https://discord.com/api/v10/users/@me",
+                     headers={"Authorization": TOKEN})
+    if r.status_code != 200:
+        print("Invalid token!")
+        exit()
+    u = r.json()
+    print(f"Logged in as {u['username']} ({u['id']})!")
+
+
+async def gateway():
     uri = "wss://gateway.discord.gg/?v=10&encoding=json"
+    activity = build_activity()
 
     async with websockets.connect(uri) as ws:
         hello = json.loads(await ws.recv())
-        heartbeat_interval = hello["d"]["heartbeat_interval"]
+        interval = hello["d"]["heartbeat_interval"] / 1000
 
         async def heartbeat():
             while True:
-                await asyncio.sleep(heartbeat_interval / 1000)
+                await asyncio.sleep(interval)
                 await ws.send(json.dumps({"op": 1, "d": None}))
 
         asyncio.create_task(heartbeat())
 
-        identify = {
+        await ws.send(json.dumps({
             "op": 2,
             "d": {
                 "token": TOKEN,
-                "properties": {
-                    "$os": "windows",
-                    "$browser": "chrome",
-                    "$device": "pc"
-                },
-                "presence": {
-                    "status": STATUS,
-                    "afk": False,
-                    "activities": [activity]
-                }
-            }
-        }
-        await ws.send(json.dumps(identify))
+                "properties": {"$os": "windows", "$browser": "chrome", "$device": "pc"},
+                "presence": {"status": STATUS, "afk": False, "activities": [activity]},
+            },
+        }))
 
         while True:
-            try:
-                msg = await ws.recv()
-                data = json.loads(msg)
+            await ws.recv()
 
-                if data.get("op") == 11:
-                    pass
 
-            except Exception as e:
-                print("Connection lost, reconnecting...", e)
-                break
+check_token()
 
 while True:
-    asyncio.run(discord_gateway())
-    asyncio.sleep(5)
+    try:
+        asyncio.run(gateway())
+    except Exception as e:
+        print("Reconnecting...", e)
+        asyncio.sleep(5)
