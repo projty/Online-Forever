@@ -1,0 +1,14 @@
+{
+  "token": "Add your token here",
+  "status": "online",
+  "activity": {
+    "type": "playing",
+    "name": "Minecraft",
+    "details": "",
+    "state": "",
+    "stream_url": "",
+    "custom_status": "Hey!",
+    "use_emoji": false,
+    "emoji": "🔥"
+  }
+}
