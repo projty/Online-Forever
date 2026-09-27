@@ -60,7 +60,7 @@
 Download Python **3.8 or newer** from [python.org/downloads](https://python.org/downloads).
 
 > On Windows, tick **"Add Python to PATH"** during installation
-<img src="https://i.imgur.com/Ukl6HdQ.png" width="180">
+<img src="https://i.imgur.com/Ukl6HdQ.png" width="280">
 
 Verify with:
 ```bash
